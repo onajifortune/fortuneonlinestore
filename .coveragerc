@@ -1,0 +1,12 @@
+[run]
+source=account/,basket/,store/,
+omit=
+    venv
+    */migrations/*
+    */tests/*
+    */__init__.py
+    */context_processors.py
+    */tests.py
+    */urls.py
+    */admin.py
+    */apps.py
