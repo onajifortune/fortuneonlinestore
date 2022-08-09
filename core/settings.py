@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 
-# import django_heroku
+import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-ja_vyl7lf6hg99p!+^7@rld#0%k6(nou%j@_z__!n+n7_13^hh"
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 PAYPAL_TEST = False
 
 ALLOWED_HOSTS = ['*']
@@ -169,4 +169,4 @@ INTERNAL_IPS = [
 PAYPAL_RECIEVER_EMAIL = 'sb-ypchg19984341@business.example.com'
 
 
-# django_heroku.settings(locals())
+django_heroku.settings(locals())
