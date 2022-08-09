@@ -6,4 +6,4 @@ from .models import Customer
 # admin.site.register(Customer)
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ['is_active', 'is_staff']
+    list_display = ['name', 'email', 'is_active', 'is_staff']

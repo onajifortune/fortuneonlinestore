@@ -2,6 +2,13 @@
 {% block title %}Log-in{% endblock %}
 {% block sub_content %}
 
+<style>
+  a {
+    color: black;
+  }
+</style>
+
+<div class="col-6 mx-auto">
 <form class="account-form" action="{% url 'account:login' %}" method="post">
   {% csrf_token %}
   <h3 class="mb-4">Sign In</h3>
@@ -16,7 +23,7 @@
   {{ form.password}}
   <div class="d-grid gap-2">
     <input type="hidden" name="next" value="{{ next }}">
-    <button class="btn btn-primary py-2 mb-4 mt-5 fw-bold" type="submit" value="Log-in">Sign in
+    <button class="btn btn-dark py-2 mb-4 mt-5 fw-bold" type="submit" value="Log-in">Sign in
     </button>
   </div>
   <div class="flex-column justify-content-center mx-auto pb-3">
@@ -24,5 +31,6 @@
     <div class="text-center"><a href="{% url "account:pwdreset" %}">Forgotten Password?</a></div>
   </div>
 </form>
+</div>
 
 {% endblock %}

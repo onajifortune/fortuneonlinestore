@@ -27,6 +27,8 @@
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-3">
           {% for product in products %}
           <div class="col">
+            <a class="text-reset text-decoration-none"
+                    href="{{ product.get_absolute_url }}">
             <div class="card border-0">
               {% for image in product.product_image.all %}
               {% if image.is_feature%}
@@ -36,12 +38,12 @@
               {% endfor %}
               <div class="card-body px-0">
                 <p class="card-text">
-                  <a class="text-dark text-decoration-none"
-                    href="{{ product.get_absolute_url }}">{{ product.title|slice:":50" }}...</a>
+                  <p class="card-text small text-muted" >{{ product.title|slice:":50" }}...</p>
                 </p>
                 <div class="fw-bold">£{{product.regular_price}}</div>
               </div>
             </div>
+          </a>
           </div>
           {% endfor %}
         </div>
