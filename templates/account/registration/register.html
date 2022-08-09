@@ -8,7 +8,7 @@
   }
 </style>
 
-<div class="col-6 mx-auto">
+
 <form class="account-form" action="." method="post">
   {% csrf_token %}
   <h3 class="mb-2">Create an account</h3>
@@ -45,6 +45,5 @@
     <a href="{% url "account:login" %}">Already have an account?</a>
   </p>
 </form>
-</div>
 
 {% endblock %}

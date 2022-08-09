@@ -1,6 +1,8 @@
+import smtplib
 import uuid
 
 from django.apps import apps
+from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -63,14 +65,17 @@ class Customer(AbstractBaseUser, PermissionsMixin):
         verbose_name = "Accounts"
         verbose_name_plural = "Accounts"
 
-    def email_user(self, subject, message):
-        send_mail(
-            subject,
-            message,
-            'djangotestfortuneapp@gmail.com',
-            [self.email],
-            fail_silently=False,
-        )
+    def email_user(self, subject, message, recipient_list):
+        email_password = settings.EMAIL_HOST_PASSWORD
+        email_from = settings.EMAIL_HOST_USER
+        text = f'Subject: {subject}\n\n{message}'
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.ehlo()
+        # server.starttls()
+        server.login(email_from, email_password)
+        print('Login Successfull')
+        server.sendmail(email_from, recipient_list, text)
+        print('Email Sent to ', recipient_list[0])
 
     def __str__(self):
         return self.name

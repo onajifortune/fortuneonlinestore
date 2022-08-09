@@ -37,7 +37,7 @@ class UserAddressForm(forms.ModelForm):
 
 class UserLoginForm(AuthenticationForm):
 
-    username = forms.CharField(widget=forms.TextInput(
+    username = forms.EmailField(widget=forms.TextInput(
         attrs={'class': 'form-control mb-3', 'placeholder': 'Email', 'id': 'login-username'}))
     password = forms.CharField(widget=forms.PasswordInput(
         attrs={
