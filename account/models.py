@@ -68,8 +68,9 @@ class Customer(AbstractBaseUser, PermissionsMixin):
     def email_user(self, subject, message, recipient_list):
         email_password = settings.EMAIL_HOST_PASSWORD
         email_from = settings.EMAIL_HOST_USER
+        smtp = settings.EMAIL_HOST
         text = f'Subject: {subject}\n\n{message}'
-        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server = smtplib.SMTP_SSL(smtp, 465)
         server.ehlo()
         # server.starttls()
         server.login(email_from, email_password)
