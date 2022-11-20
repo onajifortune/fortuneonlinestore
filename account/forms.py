@@ -1,11 +1,37 @@
+import smtplib
+import unicodedata
+
 from django import forms
+from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import (
     AuthenticationForm,
     PasswordResetForm,
     SetPasswordForm,
 )
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import EmailMultiAlternatives
+from django.template import loader
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
+from django.utils.translation import gettext_lazy as _
 
 from .models import Address, Customer
+
+UserModel = get_user_model()
+
+
+def _unicode_ci_compare(s1, s2):
+    """
+    Perform case-insensitive comparison of two identifiers, using the
+    recommended algorithm from Unicode Technical Report 36, section
+    2.11.2(B)(2).
+    """
+    return (
+        unicodedata.normalize("NFKC", s1).casefold()
+        == unicodedata.normalize("NFKC", s2).casefold()
+    )
 
 
 class UserAddressForm(forms.ModelForm):
@@ -106,6 +132,70 @@ class PwdResetForm(PasswordResetForm):
             raise forms.ValidationError(
                 'Unfortunatley we can not find that email address')
         return email
+
+    def email_user(self, subject, email_template_name, context, user_email):
+        """
+        Send a django.core.mail.EmailMultiAlternatives to `to_email`.
+        """
+        email_password = settings.EMAIL_HOST_PASSWORD
+        email_from = settings.EMAIL_HOST_USER
+        smtp = settings.EMAIL_HOST
+        recipient_list = [user_email, ]
+        message = loader.render_to_string(email_template_name, context,)
+        print(message)
+        text = f'Subject: {subject}\n\n{message}'
+        server = smtplib.SMTP_SSL(smtp, 465)
+        server.ehlo()
+        # server.starttls()
+        server.login(email_from, email_password)
+        print('Login Successfull')
+        server.sendmail(email_from, recipient_list, text)
+        print('Email Sent to ', recipient_list[0])
+
+    def save(
+        self,
+        domain_override=None,
+        subject_template_name="registration/password_reset_subject.txt",
+        email_template_name="registration/password_reset_email.html",
+        use_https=False,
+        token_generator=default_token_generator,
+        from_email=None,
+        request=None,
+        html_email_template_name=None,
+        extra_email_context=None,
+    ):
+        """
+        Generate a one-use only link for resetting password and send it to the
+        user.
+        """
+        email = self.cleaned_data["email"]
+        if not domain_override:
+            current_site = get_current_site(request)
+            site_name = current_site.name
+            domain = current_site.domain
+        else:
+            site_name = domain = domain_override
+        email_field_name = UserModel.get_email_field_name()
+        for user in self.get_users(email):
+            user_email = getattr(user, email_field_name)
+            subject = 'Reset your Password'
+            context = {
+                "email": user_email,
+                "domain": domain,
+                "site_name": site_name,
+                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                "user": user,
+                "token": token_generator.make_token(user),
+                "protocol": "https" if use_https else "http",
+                **(extra_email_context or {}),
+            }
+            print(context)
+            self.email_user(
+                subject,
+                email_template_name,
+                context,
+                user_email,
+            )
 
 
 class PwdResetConfirmForm(SetPasswordForm):

@@ -20,7 +20,7 @@ urlpatterns = [
     # Reset password
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name="account/password_reset/password_reset_form.html",
                                                                  success_url='password_reset_email_confirm',
-                                                                 email_template_name='account/user/password_reset_email.html',
+                                                                 email_template_name='account/password_reset/password_reset_email.html',
                                                                  form_class=PwdResetForm), name='pwdreset'),
     path('password_reset_confirm/<uidb64>/<token>', auth_views.PasswordResetConfirmView.as_view(template_name='account/user/password_reset_confirm.html',
                                                                                                 success_url='/account/password_reset_complete/',
