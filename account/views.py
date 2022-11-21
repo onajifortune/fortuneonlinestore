@@ -59,10 +59,10 @@ def account_register(request):
             user.email = registerForm.cleaned_data['email']
             user.set_password(registerForm.cleaned_data['password'])
             user.is_active = False
-            # user.save()
+            user.save()
             current_site = get_current_site(request)
             subject = 'Activate your Account'
-            print(user)
+            # print(user)
             recipient_list = [user.email, ]
             message = render_to_string('account/registration/account_activation_email.html', {
                 'user': user,
